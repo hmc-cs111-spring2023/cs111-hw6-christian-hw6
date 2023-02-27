@@ -27,3 +27,17 @@ extension(lang1: RegularLanguage)
         if (n == 0) then Empty
         else if (n == 1) then lang1
         else Concat(lang1, (lang1(n-1)))
+    def toDFA:DFA = regexToDFA(lang1, chars(lang1))
+
+// Helper function to extract chars for regextoDFA
+def chars(lang: RegularLanguage): Set[Char] =
+    lang match
+        case Empty => Set()
+        case Epsilon => Set()
+        case Character(c) => Set(c)
+        case Union(r1, r2) => (chars(r1) ++ chars(r2))
+        case Concat(r1,r2) => (chars(r1) ++ chars(r2))
+        case Star(r) => chars(r)
+
+given Conversion[RegularLanguage, DFA] with
+    def apply(r: RegularLanguage): DFA = (r toDFA)
